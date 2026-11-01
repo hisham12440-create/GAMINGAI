@@ -30,8 +30,10 @@ Presenter::Presenter(Device& device,const std::filesystem::path& directory) : de
     check_hr(dxgi->GetAdapter(&adapter),"Get presenting adapter");
     Microsoft::WRL::ComPtr<IDXGIFactory2> factory;
     check_hr(adapter->GetParent(IID_PPV_ARGS(&factory)),"Get DXGI factory");
-    check_hr(factory->CreateSwapChainForHwnd(device.get(),window_->handle(),&desc,nullptr,nullptr,&swap_),
+    Microsoft::WRL::ComPtr<IDXGISwapChain1> swap1;
+    check_hr(factory->CreateSwapChainForHwnd(device.get(),window_->handle(),&desc,nullptr,nullptr,&swap1),
         "Create flip-model swap chain");
+    check_hr(swap1.As(&swap_),"Query waitable IDXGISwapChain2");
     check_hr(swap_->SetMaximumFrameLatency(1),"SetMaximumFrameLatency");
     waitable_.attach(swap_->GetFrameLatencyWaitableObject());
     if (!waitable_) throw Error("Swap chain returned no waitable handle");
