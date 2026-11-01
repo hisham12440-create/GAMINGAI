@@ -28,7 +28,9 @@ ParsedHotkey parse_hotkey(const std::string& input) {
         if (part.size() == 1 && ((part[0] >= 'A' && part[0] <= 'Z') || (part[0] >= '0' && part[0] <= '9')))
             result.key = static_cast<unsigned char>(part[0]);
         else if (part.size() >= 2 && part[0] == 'F' && part.find_first_not_of("0123456789", 1) == std::string::npos) {
-            const auto n = std::stoul(part.substr(1));
+            const auto digits=part.substr(1);
+            if(digits.size()>2)throw std::runtime_error("Function key must be F1..F24");
+            const auto n=std::stoul(digits);
             if (n < 1 || n > 24) throw std::runtime_error("Function key must be F1..F24");
             result.key = VK_F1 + n - 1;
         } else {
