@@ -31,7 +31,7 @@ struct TextEngine::Impl {
     struct Shape { std::vector<Glyph> glyphs; float width = 0; };
     std::unordered_map<std::string, Shape> cache;
 
-    Impl(ImFontAtlas& a, const std::filesystem::path& p, float pixels) : atlas(a), path(p), size(pixels) {
+    Impl(ImFontAtlas& a, const std::filesystem::path& p, float pixel_size) : atlas(a), path(p), size(pixel_size) {
         std::ifstream f(p, std::ios::binary | std::ios::ate);
         if (!f) throw Error("Cannot open UI font: " + p.string());
         const auto length = f.tellg();
@@ -104,7 +104,7 @@ struct TextEngine::Impl {
         Shape result;
         if (!wide.empty()) {
             std::vector<SCRIPT_ITEM> items(wide.size() + 1);
-            SCRIPT_CONTROL control{}; control.uDefaultDirection = rtl ? 1 : 0;
+            SCRIPT_CONTROL control{};
             SCRIPT_STATE state{}; state.uBidiLevel = rtl ? 1 : 0;
             int count = 0;
             check_hr(ScriptItemize(wide.c_str(), static_cast<int>(wide.size()), static_cast<int>(items.size()) - 1,

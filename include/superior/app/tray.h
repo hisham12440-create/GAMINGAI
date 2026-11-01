@@ -1,5 +1,6 @@
 #pragma once
 #include <windows.h>
+#include <shellapi.h>
 namespace superior {
 class Tray {
 public:

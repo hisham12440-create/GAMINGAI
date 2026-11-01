@@ -18,7 +18,8 @@ function(superior_warnings target)
     if(MSVC)
         target_compile_options(${target} PRIVATE /W4 /permissive- /utf-8 /EHsc /Zc:__cplusplus)
         target_compile_definitions(${target} PRIVATE UNICODE _UNICODE WIN32_LEAN_AND_MEAN NOMINMAX
-            _WIN32_WINNT=0x0A00 WINVER=0x0A00)
+            _WIN32_WINNT=0x0A00 WINVER=0x0A00
+            _SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS)
     endif()
 endfunction()
 
