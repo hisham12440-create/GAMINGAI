@@ -161,7 +161,7 @@ int Application::run(){
         }catch(const std::exception& e){
             fail(e);
             if(!ui_.visible())ui_.show();
-            if(Error* typed=dynamic_cast<const Error*>(&e);typed&&(typed->code()==DXGI_ERROR_DEVICE_REMOVED||typed->code()==DXGI_ERROR_DEVICE_RESET))fatal_=true;
+            if(const Error* typed=dynamic_cast<const Error*>(&e);typed&&(typed->code()==DXGI_ERROR_DEVICE_REMOVED||typed->code()==DXGI_ERROR_DEVICE_RESET))fatal_=true;
         }
         if(fatal_){MessageBoxW(ui_.handle(),L"Graphics device lost. Close the game if necessary, then restart Superior.",L"Superior",MB_OK|MB_ICONERROR);break;}
         HANDLE handles[]={capture_.event()};

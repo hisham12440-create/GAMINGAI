@@ -62,7 +62,7 @@ void Capture::start(HWND window) {
         });
         const auto item_size=item_.Size(); create_pool({item_size.Width,item_size.Height});
         session_ = pool_.CreateCaptureSession(item_);
-        if (auto session2=session_.try_as<winrt_capture::IGraphicsCaptureSession2>()) session2.IsCursorEnabled(false);
+        if (auto session2=session_.try_as<winrt_capture::IGraphicsCaptureSession3>()) session2.IsCursorEnabled(false);
         // Keep the system capture border: disabling it can require restricted capabilities.
         session_.StartCapture();
     } catch (...) { stop(); throw; }
