@@ -86,8 +86,8 @@ struct TextEngine::Impl {
         // Keep alpha pixels alive: the DX11 backend uploads them after this constructor.
     }
     struct Bitmap {
-        Bitmap(unsigned char* p, int w, int h, int r) : data(p, stbtt_FreeBitmap), width(w), height(h), rect(r) {}
-        std::unique_ptr<unsigned char, decltype(&stbtt_FreeBitmap)> data;
+        Bitmap(unsigned char* p, int w, int h, int r) : data(p, [](unsigned char* bitmap) { stbtt_FreeBitmap(bitmap, nullptr); }), width(w), height(h), rect(r) {}
+        std::unique_ptr<unsigned char, void(*)(unsigned char*)> data;
         int width, height, rect;
     };
     std::vector<Bitmap> bitmaps;
