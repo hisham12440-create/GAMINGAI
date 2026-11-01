@@ -20,10 +20,14 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Set up MSVC x64
+        uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1
+        with:
+          arch: x64
       - name: Configure x64
         shell: pwsh
         run: |
-          cmd /c 'cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DCMAKE_CONFIGURATION_TYPES=Release -DBUILD_TESTING=ON > configure.log 2>&1'
+          cmd /c 'cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON > configure.log 2>&1'
           $code = $LASTEXITCODE
           Get-Content configure.log
           if ($code -ne 0) {
@@ -33,7 +37,7 @@ jobs:
       - name: Build Release and HLSL
         shell: pwsh
         run: |
-          cmd /c 'cmake --build build --config Release --parallel > build.log 2>&1'
+          cmd /c 'cmake --build build --parallel > build.log 2>&1'
           $code = $LASTEXITCODE
           Get-Content build.log -Tail 150
           if ($code -ne 0) {
@@ -43,7 +47,7 @@ jobs:
       - name: CPU-only unit tests
         shell: pwsh
         run: |
-          cmd /c 'ctest --test-dir build -C Release --output-on-failure --no-tests=error > tests.log 2>&1'
+          cmd /c 'ctest --test-dir build --output-on-failure --no-tests=error > tests.log 2>&1'
           $code = $LASTEXITCODE
           Get-Content tests.log
           if ($code -ne 0) {
@@ -66,13 +70,13 @@ jobs:
           $ErrorActionPreference = 'Stop'
           $vs = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
           $dumpbin = Get-ChildItem "$vs\VC\Tools\MSVC\*\bin\Hostx64\x64\dumpbin.exe" | Select-Object -First 1
-          $imports = & $dumpbin.FullName /dependents build\Release\Superior.exe
+          $imports = & $dumpbin.FullName /dependents build\Superior.exe
           $imports | Write-Host
           if ($imports -match 'VCRUNTIME|MSVCP') { throw 'Dynamic CRT detected; Release must use /MT.' }
           $stage = 'artifacts/Superior'
           New-Item -ItemType Directory -Force -Path $stage, "$stage/shaders", "$stage/config", "$stage/models", "$stage/licenses" | Out-Null
-          Copy-Item build\Release\Superior.exe $stage
-          Copy-Item build\Release\shaders\*.cso "$stage/shaders"
+          Copy-Item build\Superior.exe $stage
+          Copy-Item build\shaders\*.cso "$stage/shaders"
           Copy-Item shaders\present.hlsl "$stage/shaders"
           Copy-Item config\settings.example.json "$stage/config"
           Copy-Item models\README.txt "$stage/models"
@@ -82,12 +86,12 @@ jobs:
           Copy-Item build\_deps\harfbuzz-src\COPYING "$stage/licenses/HarfBuzz.txt"
           Copy-Item build\_deps\googletest-src\LICENSE "$stage/licenses/GoogleTest.txt"
           Compress-Archive -Path "$stage/*" -DestinationPath artifacts/Superior-windows-x64.zip -Force
-          Get-FileHash build\Release\Superior.exe, artifacts\Superior-windows-x64.zip -Algorithm SHA256 | Format-List
+          Get-FileHash build\Superior.exe, artifacts\Superior-windows-x64.zip -Algorithm SHA256 | Format-List
       - name: Upload Superior.exe
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: Superior-exe
-          path: build/Release/Superior.exe
+          path: build/Superior.exe
           if-no-files-found: error
       - name: Upload portable package
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

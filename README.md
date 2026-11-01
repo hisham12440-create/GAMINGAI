@@ -62,7 +62,7 @@ Implemented module boundaries: `core`, `capture`, `present`, `ui`, plus adapter 
 
 The workflow `.github/workflows/build.yml` runs on `windows-latest`:
 
-- CMake Configure: Visual Studio 17 2022, x64, Release.
+- CMake Configure: MSVC x64, Ninja, Release.
 - Build `Superior.exe` and compile HLSL with the Windows SDK `fxc`.
 - Run `ctest` CPU-only tests; fail if no tests are discovered.
 - Check executable imports for dynamic CRT dependencies.
