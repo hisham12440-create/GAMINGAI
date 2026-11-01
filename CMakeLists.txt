@@ -46,6 +46,8 @@ target_link_libraries(Superior PRIVATE superior_core superior_text imgui
     d3d11 dxgi d3dcompiler dwmapi shell32 ole32 windowsapp runtimeobject)
 superior_warnings(Superior)
 set_target_properties(Superior PROPERTIES OUTPUT_NAME Superior)
+# The RC file already embeds the asInvoker/PerMonitorV2 manifest.
+set_target_properties(Superior PROPERTIES LINK_FLAGS "/MANIFEST:NO")
 
 # Compile HLSL in CI (or on a developer's Windows build machine); never at app startup.
 file(GLOB_RECURSE SDK_FXC

@@ -80,7 +80,6 @@ struct TextEngine::Impl {
             for (int y = 0; y < b.height; ++y)
                 std::copy_n(b.data.get() + y * b.width, b.width,
                     pixels + (r->Y + y) * width + r->X);
-            stbtt_FreeBitmap(b.data.get(), nullptr);
         }
         bitmaps.clear();
         // Keep alpha pixels alive: the DX11 backend uploads them after this constructor.

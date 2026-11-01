@@ -118,7 +118,7 @@ void Presenter::render(HWND target,ID3D11ShaderResourceView* source,SIZE source_
         ID3D11RenderTargetView* rtv=rtv_.Get();ctx->OMSetRenderTargets(1,&rtv,nullptr);
         D3D11_VIEWPORT vp{0,0,static_cast<float>(width),static_cast<float>(height),0,1};ctx->RSSetViewports(1,&vp);
         ctx->RSSetState(rasterizer_.Get());ctx->IASetInputLayout(nullptr);ctx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-        ctx->VSSetShader(vertex_.Get(),nullptr,0);ctx->PSSetShader(pixel_.Get(),nullptr,0);
+        ctx->VSSetShader(vertex_.Get(),nullptr,0);ctx->VSSetConstantBuffers(0,1,&constants_);ctx->PSSetShader(pixel_.Get(),nullptr,0);
         ctx->PSSetShaderResources(0,1,&source);ctx->PSSetSamplers(0,1,&sampler_);ctx->PSSetConstantBuffers(0,1,&constants_);
         ctx->Draw(3,0);ctx->OMSetRenderTargets(0,nullptr,nullptr);
     }
