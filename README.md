@@ -72,6 +72,8 @@ Dependencies are fetched at pinned revisions with SHA-256 archive checks: Dear I
 
 A green workflow means compilation, shader compilation, CPU tests and packaging passed. It does **not** mean capture, overlay visibility, Arabic rendering, latency, thermals or compatibility were tested on a real GPU.
 
+The implementation/verification handoff is in [docs/STAGE1_REPORT.md](docs/STAGE1_REPORT.md).
+
 ## Manual acceptance test for request 1
 
 - [ ] Launch without elevation; confirm the panel and tray icon appear.
