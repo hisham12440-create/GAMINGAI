@@ -18,7 +18,7 @@ private:
     void release_target() noexcept;
     Device& device_;
     std::unique_ptr<Window> window_;
-    Microsoft::WRL::ComPtr<IDXGISwapChain1> swap_;
+    Microsoft::WRL::ComPtr<IDXGISwapChain2> swap_;
     Microsoft::WRL::ComPtr<ID3D11Texture2D> backbuffer_;
     Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> uav_;
     Microsoft::WRL::ComPtr<ID3D11RenderTargetView> rtv_;

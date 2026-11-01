@@ -36,13 +36,13 @@ TEST(Config, AtomicSaveBackupAndCorruptRecovery) {
     s.language=Language::English;save_settings(path,s);
     {std::ofstream f(path);f<<"corrupt";}
     const auto loaded=load_settings(path);EXPECT_EQ(loaded.settings.language,Language::Arabic);EXPECT_FALSE(loaded.notice.empty());
-    EXPECT_TRUE(std::filesystem::exists(path));EXPECT_FALSE(std::filesystem::exists(path.string()+L".tmp"));
+    EXPECT_TRUE(std::filesystem::exists(path));EXPECT_FALSE(std::filesystem::exists(path.wstring()+L".tmp"));
     std::filesystem::remove_all(dir);
 }
 TEST(Config, BothInvalidCopiesUseDefaultsAndPreserveFiles) {
     const auto dir=std::filesystem::temp_directory_path()/L"superior-config-invalid-test";
     std::filesystem::create_directories(dir);const auto path=dir/L"settings.json";
-    {std::ofstream f(path);f<<"bad";}{std::ofstream f(path.string()+L".bak");f<<"bad";}
+    {std::ofstream f(path);f<<"bad";}{std::ofstream f(path.wstring()+L".bak");f<<"bad";}
     const auto loaded=load_settings(path);EXPECT_FALSE(loaded.notice.empty());EXPECT_TRUE(loaded.settings.validate().empty());
     std::ifstream f(path);std::string content;f>>content;EXPECT_EQ(content,"bad");std::filesystem::remove_all(dir);
 }
