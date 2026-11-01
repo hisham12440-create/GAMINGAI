@@ -20,7 +20,12 @@ The first fully green implementation run is [41349309930](https://github.com/his
 - No dynamic VCRUNTIME/MSVCP import was found in the executable.
 - `Superior-exe` and `Superior-windows-x64` artifacts were uploaded successfully.
 
-Later CI maintenance updates action versions and adds a checksum file; consult the latest successful run on the session branch for the final downloadable package. A green run is not a real-GPU certification.
+The final packaging run is [41349743470](https://github.com/hisham12440-create/GAMINGAI/actions/runs/41349743470), source revision `f3d75f8`. It also passed all stages and publishes `SHA256SUMS.txt` inside the portable artifact.
+
+- `Superior.exe`: `14170416c710d3e5c6595175afe22aa6126efdbd15739270ce7e7f3e3d4734f9`
+- `Superior-windows-x64.zip`: `6fd6c4324a7cec3395a082f32a50b765d243a56245a103576d2f611aef8b3cc6`
+
+A green run is not a real-GPU certification.
 
 ## Untested on real hardware
 
