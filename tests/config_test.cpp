@@ -44,5 +44,6 @@ TEST(Config, BothInvalidCopiesUseDefaultsAndPreserveFiles) {
     std::filesystem::create_directories(dir);const auto path=dir/L"settings.json";
     {std::ofstream f(path);f<<"bad";}{std::ofstream f(path.wstring()+L".bak");f<<"bad";}
     const auto loaded=load_settings(path);EXPECT_FALSE(loaded.notice.empty());EXPECT_TRUE(loaded.settings.validate().empty());
-    std::ifstream f(path);std::string content;f>>content;EXPECT_EQ(content,"bad");std::filesystem::remove_all(dir);
+    {std::ifstream f(path);std::string content;f>>content;EXPECT_EQ(content,"bad");}
+    std::filesystem::remove_all(dir);
 }

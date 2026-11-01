@@ -51,7 +51,7 @@ jobs:
           $code = $LASTEXITCODE
           Get-Content tests.log
           if ($code -ne 0) {
-            Get-Content tests.log -Tail 40 | ForEach-Object { Write-Output "::error title=CPU tests::$_" }
+            Select-String -Path tests.log -Pattern 'Failure|Expected|Actual|Value of|FAILED|error|Exception' | Select-Object -First 30 | ForEach-Object { Write-Output "::error title=CPU tests::$($_.Line)" }
             exit $code
           }
       - name: Retain CI diagnostics
