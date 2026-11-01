@@ -14,7 +14,7 @@ BOOL CALLBACK collect(HWND hwnd, LPARAM param) {
         if (!style && GetLastError() != ERROR_SUCCESS) return TRUE;
         if (style & WS_EX_TOOLWINDOW) return TRUE;
         DWORD process = 0;
-        if (!GetWindowThreadProcessId(hwnd, &process) || process == own_process) return TRUE;
+        if (!GetWindowThreadProcessId(hwnd, &process) || process == GetCurrentProcessId()) return TRUE;
         int length = GetWindowTextLengthW(hwnd);
         if (length <= 0 || length > 2048) return TRUE;
         std::wstring title(static_cast<size_t>(length) + 1, L'\0');

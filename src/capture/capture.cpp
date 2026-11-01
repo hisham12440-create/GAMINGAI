@@ -5,6 +5,12 @@
 #include <windows.graphics.directx.direct3d11.interop.h>
 #include <winrt/Windows.Foundation.Metadata.h>
 #include <inspectable.h>
+#include <unknwn.h>
+
+// Windows SDK interop interface for retrieving the WGC surface's DXGI texture.
+MIDL_INTERFACE("A9B3D012-3DF2-4EE3-B8D1-8695F457D3C1") IDirect3DDxgiInterfaceAccess : public IUnknown {
+    virtual HRESULT STDMETHODCALLTYPE GetInterface(REFIID iid, void** object) = 0;
+};
 
 namespace superior::capture {
 namespace winrt_capture = winrt::Windows::Graphics::Capture;
@@ -30,10 +36,10 @@ bool Capture::supported() {
 }
 void Capture::create_pool(SIZE size) {
     if (size.cx < 1 || size.cy < 1 || size.cx > 16384 || size.cy > 16384) throw Error("Invalid capture dimensions");
-    if (pool_) pool_.Recreate(interop_device_, winrt_dx::DirectXPixelFormat::B8G8R8A8UIntNormalized, 3, size);
+    if (pool_) pool_.Recreate(interop_device_, winrt_dx::DirectXPixelFormat::B8G8R8A8UIntNormalized, 3, {size.cx,size.cy});
     else {
         pool_ = winrt_capture::Direct3D11CaptureFramePool::CreateFreeThreaded(
-            interop_device_, winrt_dx::DirectXPixelFormat::B8G8R8A8UIntNormalized, 3, size);
+            interop_device_, winrt_dx::DirectXPixelFormat::B8G8R8A8UIntNormalized, 3, {size.cx,size.cy});
         frame_token_ = pool_.FrameArrived([this](auto&&, auto&&) {
             if (!SetEvent(event_.get())) OutputDebugStringA("Superior: capture SetEvent failed\n");
         });
@@ -54,9 +60,9 @@ void Capture::start(HWND window) {
             closed_.store(true, std::memory_order_release);
             if (!SetEvent(event_.get())) OutputDebugStringA("Superior: capture close SetEvent failed\n");
         });
-        create_pool(item_.Size());
+        const auto item_size=item_.Size(); create_pool({item_size.Width,item_size.Height});
         session_ = pool_.CreateCaptureSession(item_);
-        session_.IsCursorEnabled(false);
+        if (auto session2=session_.try_as<winrt_capture::IGraphicsCaptureSession2>()) session2.IsCursorEnabled(false);
         // Keep the system capture border: disabling it can require restricted capabilities.
         session_.StartCapture();
     } catch (...) { stop(); throw; }
@@ -87,7 +93,7 @@ bool Capture::acquire() {
     try {
         const auto access = frame.Surface().as<IDirect3DDxgiInterfaceAccess>();
         ComPtr<ID3D11Texture2D> source;
-        check_hr(access->GetTexture(IID_PPV_ARGS(&source)), "Get capture texture");
+        check_hr(access->GetInterface(IID_PPV_ARGS(&source)), "Get capture texture");
         D3D11_TEXTURE2D_DESC desc{}; source->GetDesc(&desc);
         if (desc.Width != static_cast<UINT>(size_.cx) || desc.Height != static_cast<UINT>(size_.cy) ||
             desc.MipLevels != 1 || desc.ArraySize != 1 || desc.SampleDesc.Count != 1 ||
