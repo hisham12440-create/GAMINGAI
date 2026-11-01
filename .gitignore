@@ -1,0 +1,10 @@
+/build/
+/out/
+/.vs/
+/.cache/
+/CMakeUserPresets.json
+*.user
+*.aps
+*.log
+*.dmp
+/artifacts/

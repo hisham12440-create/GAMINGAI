@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "language": "en",
+  "click_through": true,
+  "overlay_enabled": true,
+  "show_ui_on_start": true,
+  "hotkeys": {
+    "show_ui": "Ctrl+Alt+U",
+    "toggle_overlay": "Ctrl+Alt+O",
+    "click_through": "Ctrl+Alt+T",
+    "toggle_capture": "Ctrl+Alt+S"
+  }
+}
